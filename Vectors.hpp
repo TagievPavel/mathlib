@@ -10,322 +10,323 @@
 
 namespace math
 {
-	template <size_t DIM, typename Type>
-	struct Vector;
 
-	template <typename To, size_t DIM, typename From>
-	Vector<DIM, To> convert (const Vector<DIM, From> &from)
-	{
-		static_assert(std::is_convertible<From, To>::value, "Bad cast");
+template <size_t DIM, typename Type>
+struct Vector;
 
-		Vector<DIM, To> to;
+template <typename To, size_t DIM, typename From>
+Vector<DIM, To> convert (const Vector<DIM, From> &from)
+{
+    static_assert(std::is_convertible<From, To>::value, "Bad cast");
 
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			to[i] = static_cast<To>(from[i]);
-		}
+    Vector<DIM, To> to;
 
-		return to;
-	}
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        to[i] = static_cast<To>(from[i]);
+    }
 
-	/* Common Vector */
-	template <size_t DIM, typename Type>
-	struct Vector
-	{
-		Type& operator[] (size_t index) noexcept
-		{
-			assert(index < dim() && "Index out of range");
-			return _elements[index];
-		}
+    return to;
+}
 
-		const Type& operator[] (size_t index) const noexcept
-		{
-			assert(index < dim() && "Index out of range");
-			return _elements[index];
-		}
+/* Common Vector */
+template <size_t DIM, typename Type>
+struct Vector
+{
+    Type& operator[] (size_t index) noexcept
+    {
+        assert(index < dim() && "Index out of range");
+        return _elements[index];
+    }
 
-		template <typename OtherType>
-		operator Vector<DIM, OtherType> () const 
-		{
-			return convert<OtherType>(*this);
-		}
+    const Type& operator[] (size_t index) const noexcept
+    {
+        assert(index < dim() && "Index out of range");
+        return _elements[index];
+    }
 
-		constexpr size_t dim () const noexcept
-		{
-			return DIM;
-		}
+    template <typename OtherType>
+    operator Vector<DIM, OtherType> () const 
+    {
+        return convert<OtherType>(*this);
+    }
 
-		Type _elements[DIM];
-	};
+    constexpr size_t dim () const noexcept
+    {
+        return DIM;
+    }
 
-	/* Vector2 */
-	template <typename Type>
-	struct Vector<2, Type>
-	{
-		Type& operator[] (size_t index) noexcept
-		{
-			assert(index < dim() && "Index out of range");
-			return index == 0 ? x : y;
-		}
+    Type _elements[DIM];
+};
 
-		const Type& operator[] (size_t index) const noexcept
-		{
-			assert(index < dim() && "Index out of range");
-			return index == 0 ? x : y;
-		}
+/* Vector2 */
+template <typename Type>
+struct Vector<2, Type>
+{
+    Type& operator[] (size_t index) noexcept
+    {
+        assert(index < dim() && "Index out of range");
+        return index == 0 ? x : y;
+    }
 
-		template <typename OtherType>
-		operator Vector<2, OtherType> () const
-		{
-			return convert<OtherType>(*this);
-		}
+    const Type& operator[] (size_t index) const noexcept
+    {
+        assert(index < dim() && "Index out of range");
+        return index == 0 ? x : y;
+    }
 
-		constexpr size_t dim() const noexcept
-		{
-			return 2;
-		}
+    template <typename OtherType>
+    operator Vector<2, OtherType> () const
+    {
+        return convert<OtherType>(*this);
+    }
 
-		Type x, y;
-	};
+    constexpr size_t dim() const noexcept
+    {
+        return 2;
+    }
 
-	/* Vector3 */
-	template <typename Type>
-	struct Vector<3, Type>
-	{
-		Type& operator[] (size_t index) noexcept
-		{
-			assert(index < dim() && "Index out of range");
-			
-			switch (index)
-			{
-				case 0: return x;
-				case 1: return y;
-				case 2: return z;
-			}
+    Type x, y;
+};
 
-			return z;
-		}
+/* Vector3 */
+template <typename Type>
+struct Vector<3, Type>
+{
+    Type& operator[] (size_t index) noexcept
+    {
+        assert(index < dim() && "Index out of range");
+            
+        switch (index)
+        {
+          case 0: return x;
+          case 1: return y;
 
-		const Type& operator[] (size_t index) const noexcept
-		{
-			assert(index < dim() && "Index out of range");
-						
-			switch (index)
-			{
-				case 0: return x;
-				case 1: return y;
-				case 2: return z;
-			}
+          default: 
+          case 2: return z;
+        }
+    }
 
-			return z;
-		}
+    const Type& operator[] (size_t index) const noexcept
+    {
+        assert(index < dim() && "Index out of range");
+                        
+        switch (index)
+        {
+          case 0: return x;
+          case 1: return y;
 
-		template <typename OtherType>
-		operator Vector<3, OtherType> () const
-		{
-			return convert<OtherType>(*this);
-		}
+          default: 
+          case 2: return z;
+        }
+    }
 
-		constexpr size_t dim () const noexcept
-		{
-			return 3;
-		}
+    template <typename OtherType>
+    operator Vector<3, OtherType> () const
+    {
+        return convert<OtherType>(*this);
+    }
 
-		Type x, y, z;
-	};
+    constexpr size_t dim () const noexcept
+    {
+        return 3;
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto& operator+= (Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
-	{
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			lhv[i] += rhv[i];
-		}
+    Type x, y, z;
+};
 
-		return lhv;
-	}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto& operator+= (Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
+{
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        lhv[i] += rhv[i];
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto operator+ (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv) 
-	{
-		using ResType = decltype(LhvType() + RhvType());
-		Vector<DIM, ResType> result(lhv);
-		return result += rhv;
-	}
+    return lhv;
+}
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto& operator-= (Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
-	{
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			lhv[i] -= rhv[i];
-		}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto operator+ (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv) 
+{
+    using ResType = decltype(LhvType() + RhvType());
+    Vector<DIM, ResType> result(lhv);
+    return result += rhv;
+}
 
-		return lhv;
-	}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto& operator-= (Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
+{
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        lhv[i] -= rhv[i];
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto operator- (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
-	{
-		using ResType = decltype(LhvType() - RhvType());
-		Vector<DIM, ResType> result(lhv);
-		return result -= rhv;
-	}
+    return lhv;
+}
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto& operator*= (Vector<DIM, LhvType> &lhv, const RhvType &rhv)
-	{
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			lhv[i] *= rhv;
-		}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto operator- (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
+{
+    using ResType = decltype(LhvType() - RhvType());
+    Vector<DIM, ResType> result(lhv);
+    return result -= rhv;
+}
 
-		return lhv;
-	}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto& operator*= (Vector<DIM, LhvType> &lhv, const RhvType &rhv)
+{
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        lhv[i] *= rhv;
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto operator* (const Vector<DIM, LhvType> &lhv, const RhvType &rhv)
-	{
-		using ResType = decltype(LhvType() * RhvType());
-		Vector<DIM, ResType> result(lhv);
-		return result *= rhv;
-	}
+    return lhv;
+}
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto operator* (const LhvType &lhv, const Vector<DIM, RhvType> &rhv)
-	{
-		return rhv * lhv;
-	}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto operator* (const Vector<DIM, LhvType> &lhv, const RhvType &rhv)
+{
+    using ResType = decltype(LhvType() * RhvType());
+    Vector<DIM, ResType> result(lhv);
+    return result *= rhv;
+}
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	double operator* (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
-	{
-		double scalar = 0;
+template <size_t DIM, typename LhvType, typename RhvType>
+auto operator* (const LhvType &lhv, const Vector<DIM, RhvType> &rhv)
+{
+    return rhv * lhv;
+}
 
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			scalar += static_cast<double>(lhv[i]) * rhv[i];
-		}
+template <size_t DIM, typename LhvType, typename RhvType>
+double operator* (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
+{
+    double scalar = 0;
 
-		return scalar;
-	}
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        scalar += static_cast<double>(lhv[i]) * rhv[i];
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto& operator/= (Vector<DIM, LhvType> &lhv, const RhvType &rhv)
-	{
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			lhv[i] /= rhv;
-		}
+    return scalar;
+}
 
-		return lhv;
-	}
+template <size_t DIM, typename LhvType, typename RhvType>
+auto& operator/= (Vector<DIM, LhvType> &lhv, const RhvType &rhv)
+{
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        lhv[i] /= rhv;
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	auto operator/ (Vector<DIM, LhvType> &lhv, const RhvType &rhv)
-	{
-		using ResType = decltype(LhvType() / RhvType());
-		Vector<DIM, ResType> result(lhv);
-		return result /= rhv;
-	}
+    return lhv;
+}
 
-	template <size_t DIM, typename Type>
-	double length (const Vector<DIM, Type> &vector)
-	{
-		double tmp = 0;
+template <size_t DIM, typename LhvType, typename RhvType>
+auto operator/ (Vector<DIM, LhvType> &lhv, const RhvType &rhv)
+{
+    using ResType = decltype(LhvType() / RhvType());
+    Vector<DIM, ResType> result(lhv);
+    return result /= rhv;
+}
 
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			tmp += static_cast<double>(vector[i]) * vector[i]; 
-		}
+template <size_t DIM, typename Type>
+double length (const Vector<DIM, Type> &vector)
+{
+    double tmp = 0;
 
-		return std::sqrt(tmp);
-	}
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        tmp += static_cast<double>(vector[i]) * vector[i]; 
+    }
 
-	template <size_t DIM, typename LhvType, typename RhvType>
-	double angle (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
-	{
-		return lhv * rhv / (length(lhv) * length(rhv));
-	}
+    return std::sqrt(tmp);
+}
 
-	template <size_t DIM, typename Type>
-	auto normalize (const Vector<DIM, Type> &vector)
-	{
-		Vector<DIM, double> tmp(vector);
+template <size_t DIM, typename LhvType, typename RhvType>
+double angle (const Vector<DIM, LhvType> &lhv, const Vector<DIM, RhvType> &rhv)
+{
+    return lhv * rhv / (length(lhv) * length(rhv));
+}
 
-		return tmp /= length(tmp);
-	}
+template <size_t DIM, typename Type>
+auto normalize (const Vector<DIM, Type> &vector)
+{
+    Vector<DIM, double> tmp(vector);
 
-
-	/* Type alias */
-	template <typename Type>
-	using Vector2 = Vector<2, Type>;
-
-	template <typename Type>
-	using Vector3 = Vector<3, Type>;
-
-	/* integer types */
-	using Vector2i = Vector2<int>;
-	using Vector3i = Vector3<int>;
-
-	using Vector2u = Vector2<unsigned>;
-	using Vector3u = Vector3<unsigned>;
-
-	/* cstddef types */
-	using Vector2sz = Vector2<size_t>;
-	using Vector3sz = Vector3<size_t>;
-
-	/* floating point types */
-	using Vector2f = Vector2<float>;
-	using Vector3f = Vector3<float>;
-
-	using Vector2d = Vector2<double>;
-	using Vector3d = Vector3<double>;
+    return tmp /= length(tmp);
+}
 
 
+/* Type alias */
+template <typename Type>
+using Vector2 = Vector<2, Type>;
 
-	template <typename LhvType, typename RhvType>
-	auto cross (const Vector3<LhvType> &lhv, const Vector3<RhvType> &rhv)
-	{
-		using MulType = decltype(LhvType() * RhvType());
-		using ResType = decltype(MulType() + MulType());
+template <typename Type>
+using Vector3 = Vector<3, Type>;
 
-		return Vector3<ResType>
-		{
-			lhv[1] * rhv[2] - rhv[1] * lhv[2],
-		   -lhv[0] * rhv[2] + rhv[0] * lhv[2],
-			lhv[0] * rhv[1] - rhv[0] * lhv[1]
-		};
-	}
+/* integer types */
+using Vector2i = Vector2<int>;
+using Vector3i = Vector3<int>;
 
-	template <typename FirstType, typename SecondType, typename ThirdType>
-	double mixed (const Vector3<FirstType> &first, const Vector3<SecondType> &second, const Vector3<ThirdType> &third)
-	{
-		return first * cross(second, third);
-	}
+using Vector2u = Vector2<unsigned>;
+using Vector3u = Vector3<unsigned>;
 
-	template <size_t DIM, typename Type>
-	std::istream& operator>> (std::istream &in, Vector<DIM, Type> &vector)
-	{
-		for (size_t i = 0; i < DIM; ++i)
-		{
-			in >> vector[i];	
-		}
+/* cstddef types */
+using Vector2sz = Vector2<size_t>;
+using Vector3sz = Vector3<size_t>;
 
-		return in;
-	}
+/* floating point types */
+using Vector2f = Vector2<float>;
+using Vector3f = Vector3<float>;
 
-	template <size_t DIM, typename Type>
-	std::ostream& operator<< (std::ostream &out, const Vector<DIM, Type> &vector)
-	{
-		size_t i = 0;
-		for (; i < DIM - 1; ++i)
-		{
-			out << vector[i] << ' ';
-		}
-	
-		return out << vector[i];
-	}
+using Vector2d = Vector2<double>;
+using Vector3d = Vector3<double>;
+
+
+
+template <typename LhvType, typename RhvType>
+auto cross (const Vector3<LhvType> &lhv, const Vector3<RhvType> &rhv)
+{
+    using MulType = decltype(LhvType() * RhvType());
+    using ResType = decltype(MulType() + MulType());
+
+    return Vector3<ResType>
+    {
+        lhv[1] * rhv[2] - rhv[1] * lhv[2],
+       -lhv[0] * rhv[2] + rhv[0] * lhv[2],
+        lhv[0] * rhv[1] - rhv[0] * lhv[1]
+    };
+}
+
+template <typename FirstType, typename SecondType, typename ThirdType>
+double mixed (const Vector3<FirstType> &first, const Vector3<SecondType> &second, const Vector3<ThirdType> &third)
+{
+    return first * cross(second, third);
+}
+
+template <size_t DIM, typename Type>
+std::istream& operator>> (std::istream &in, Vector<DIM, Type> &vector)
+{
+    for (size_t i = 0; i < DIM; ++i)
+    {
+        in >> vector[i];	
+    }
+
+    return in;
+}
+
+template <size_t DIM, typename Type>
+std::ostream& operator<< (std::ostream &out, const Vector<DIM, Type> &vector)
+{
+    size_t i = 0;
+    for (; i < DIM - 1; ++i)
+    {
+        out << vector[i] << ' ';
+    }
+    
+    return out << vector[i];
+}
 }//namespace math
 
 #endif//VECTORS_HPP
